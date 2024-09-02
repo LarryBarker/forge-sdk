@@ -4,6 +4,7 @@ namespace Laravel\Forge;
 
 use GuzzleHttp\Client as HttpClient;
 use Laravel\Forge\Resources\User;
+use Exception;
 
 class Forge
 {
@@ -76,6 +77,12 @@ class Forge
      */
     protected function transformCollection($collection, $class, $extraData = [])
     {
+        if (!is_array($collection)) {
+            throw new Exception(
+                "Unexpected response format. Expected an array, got " . gettype($response)
+            );
+        }
+        
         return array_map(function ($data) use ($class, $extraData) {
             return new $class($data + $extraData, $this);
         }, $collection);
